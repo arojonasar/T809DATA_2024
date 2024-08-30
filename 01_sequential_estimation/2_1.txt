@@ -1,0 +1,8 @@
+I don't expect the batch estimate to be exactly (-1,2) due to the randomness of the data.
+It's expected to be close to the mean, but not exactly.
+To get a closer real mean to the expected, the variance parameter could be lowered.
+That means that the data points have 'smaller space' to cluster around, so it gets closer to the real mean.
+You could also increase the number of samples (data points) to get the real mean closer to the expected.
+When the amount of data points is increased, the 'realer' the mean gets.
+If you toss a coin twice, you can not expect to get heads once and tails once,
+but if you toss the coin 5000 times, the number of heads should be very close to 2500.
