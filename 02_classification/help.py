@@ -60,4 +60,4 @@ if __name__ == '__main__':
     print('Running estimate_covariance: ')
     estimate_covariance()
     print('Running pdf: ')
-    pdf()
+    multivariate_normal_pdf()
