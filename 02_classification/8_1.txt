@@ -1,0 +1,25 @@
+(Question A) Compare the accuracy of both datasets, if the results are different, what explains the difference?
+
+Answer: Just when looking at the figure from Section 2, it's very different. 
+The data points in this later dataset are far apart and the seperation between classes is very clear.
+What explains that, is that the means are further apart (-4 and 4), and the standard deviation is lower (sqrt(2)),
+so the data points are not as spread as in the first dataset where the standard deviation is sqrt(5).
+For these two reasons, I would say that the accuracy of the later dataset is higher, because it's easier to distinguish between the classes.
+
+
+(Question B) What happens when you change the:
+    number of datapoints
+    mean of the normal distributions
+    standard deviation of the normal distributions
+Explain in a few words how and why each of these affect the accuracy of your model.
+
+Answer: 
+* Number of datapoints
+I would think that generally, if you generate more datapoints, the model should get more accurate. Honestly, I cannot see much difference in this model. 
+
+* Mean of the normal distributions
+When the means are further apart, it's less likely that the data points overlap between classes, making the accuracy of the model higher.
+
+* Standard deviation of the normal distributions
+The higher the standard deviation, the more spread out the data points. Which makes it more likely that the data points overlap between classes.
+So to make the accuracy of the model higher, I would lower the standard deviation.
