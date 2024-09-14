@@ -1,0 +1,10 @@
+The predictions are a bit off. To help with visualizing the performance, I plotted two figures.
+The first one, 5_a.png, shows the predictions versus the actual values.
+Each point represents one prediction, and the closer to the red line, the more accurate the prediction.
+As we can see the predictions are not very accurate, and the higher the actual value, the more off the prediction is.
+The other figure, 5_b.png, shows a pattern in the error. The figure shows residuals (predictions - actual values) on the y-axis 
+and actual values on the x-axis. The red line is a reference line. If all points were on this line, the model would be perfect. 
+However, that is not the case here, instead, the dots (residuals) are in a fairly straight line downwards,
+meaning that for low actual values, the model tends to overpredict (high residual value),
+but for higher actual values, the model underpredicts (low residual value).
+This suggests that the model is biased and isn't capturing the relationship between the features and targets as well as possible.
