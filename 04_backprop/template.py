@@ -141,8 +141,66 @@ def train_nn(
     3. Backpropagating the error through the network to adjust
     the weights.
     '''
-    ...
+    # Initialize necessary variables
+    N = X_train.size(0)
+    Etotal = torch.zeros(iterations)
+    misclassification_rate = torch.zeros(iterations)
 
+    # One-hot encode the targets so it matches the output of backprop
+    t_train = one_hot_encode(t_train.long(), K)
+
+    # Run a loop for iterations iterations.
+    for i in range(iterations):
+        # In each iteration we will collect the gradient error matrices for each data point. 
+        # Start by initializing dE1_total and dE2_total as zero matrices with the same shape as W1 and W2 respectively.
+        dE1_total = torch.zeros_like(W1)
+        dE2_total = torch.zeros_like(W2)
+        last_guesses = torch.empty(N, K)
+        total_error = 0.0
+
+        # Run a loop over all the data points in X_train. 
+        # In each iteration we call backprop to get the gradient error matrices and the output values.
+        for j in range(N):
+            x = X_train[j]
+            target_y = t_train[j]
+
+            output, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
+            dE1_total += dE1
+            dE2_total += dE2
+
+            # Store the probabilities in last_guesses
+            last_guesses[j] = output.squeeze() # Squeeze to ensure it's (K,) rather than (1, K)
+
+            # Calculate cross-entropy error
+            cross_entropy = -torch.sum(target_y * torch.log(output) + (1 - target_y) * torch.log(1 - output))
+            total_error += cross_entropy.item()
+
+        # Once we have collected the error gradient matrices for all the data points, we adjust the weights in W1 and W2
+        # using W1 = W1 - eta * dE1_total / N where N is the number of data points in X_train (and similarly for W2)
+        W1 = W1 - eta * dE1_total / N
+        W2 = W2 - eta * dE2_total / N
+
+        Etotal[i] = total_error / N
+
+        # Calculate misclassification rate
+        predicted_classes = torch.argmax(last_guesses, dim=1)
+        true_classes = torch.argmax(t_train, dim=1)
+        misclassification_rate[i] = (predicted_classes != true_classes).float().mean()
+
+    # When the outer loop finishes, we return from the function
+    return W1, W2, Etotal, misclassification_rate, predicted_classes
+
+def one_hot_encode(
+    targets: torch.Tensor, 
+    num_classes: int
+) -> torch.Tensor:
+    # Create a zero matrix of shape (N, K)
+    one_hot = torch.zeros(targets.size(0), num_classes)
+    
+    # Use scatter_ to fill in the one-hot encoding (1 at the index of the target class)
+    one_hot.scatter_(1, targets.unsqueeze(1), 1)
+    
+    return one_hot
 
 def test_nn(
     X: torch.Tensor,
@@ -166,12 +224,12 @@ if __name__ == "__main__":
     """
 
     """Section 1.1"""
-    print(sigmoid(torch.Tensor([0.5])))
-    print(d_sigmoid(torch.Tensor([0.2])))
+    # print(sigmoid(torch.Tensor([0.5])))
+    # print(d_sigmoid(torch.Tensor([0.2])))
 
     """Section 1.2"""
-    print(perceptron(torch.Tensor([1.0, 2.3, 1.9]), torch.Tensor([0.2, 0.3, 0.1])))
-    print(perceptron(torch.Tensor([0.2, 0.4]), torch.Tensor([0.1, 0.4])))
+    # print(perceptron(torch.Tensor([1.0, 2.3, 1.9]), torch.Tensor([0.2, 0.3, 0.1])))
+    # print(perceptron(torch.Tensor([0.2, 0.4]), torch.Tensor([0.1, 0.4])))
 
     """Section 1.3"""
     # initialize the random generator to get repeatable results
@@ -193,11 +251,11 @@ if __name__ == "__main__":
     W2 = 2 * torch.rand(M + 1, K) - 1
     y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
 
-    print('y:', y)
-    print('z0:', z0)
-    print('z1:', z1)
-    print('a1:', a1)
-    print('a2:', a2)
+    # print('y:', y)
+    # print('z0:', z0)
+    # print('z1:', z1)
+    # print('a1:', a1)
+    # print('a2:', a2)
 
     """Section 1.4"""
     # initialize random generator to get predictable results
@@ -219,6 +277,26 @@ if __name__ == "__main__":
 
     y, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
 
-    print('y:', y)
-    print('dE1:', dE1)
-    print('dE2:', dE2)
+    # print('y:', y)
+    # print('dE1:', dE1)
+    # print('dE2:', dE2)
+    
+    """Section 2.1"""
+    # initialize the random seed to get predictable results
+    torch.manual_seed(1234)
+
+    K = 3  # number of classes
+    M = 6
+    D = train_features.shape[1]
+
+    # Initialize two random weight matrices
+    W1 = 2 * torch.rand(D + 1, M) - 1
+    W2 = 2 * torch.rand(M + 1, K) - 1
+    W1tr, W2tr, Etotal, misclassification_rate, last_guesses = train_nn(
+        train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
+    
+    print('W1tr:', W1tr)
+    print('W2tr:', W2tr)
+    print('Etotal:', Etotal)
+    print('misclassification_rate:', misclassification_rate)
+    print('last_guesses:', last_guesses)
