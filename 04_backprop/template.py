@@ -1,5 +1,6 @@
 from typing import Union
 import torch
+import matplotlib.pyplot as plt
 
 from tools import load_iris, split_train_test
 
@@ -213,7 +214,22 @@ def test_nn(
     Return the predictions made by a network for all features
     in the test set X.
     '''
-    ...
+    # Number of test samples
+    N = X.shape[0]
+    predictions = torch.zeros(N)
+
+    # Forward propagate each sample through the network
+    for i in range(N):
+        x = X[i, :]
+        output, _, _, _, _ = ffnn(x, M, K, W1, W2)
+
+        # Get the index (class) with the maximum output probability
+        predicted_class = torch.argmax(output, dim=1)
+
+        # Store the predicted class
+        predictions[i] = predicted_class.item()
+
+    return predictions
 
 
 if __name__ == "__main__":
@@ -295,8 +311,15 @@ if __name__ == "__main__":
     W1tr, W2tr, Etotal, misclassification_rate, last_guesses = train_nn(
         train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
     
-    print('W1tr:', W1tr)
-    print('W2tr:', W2tr)
-    print('Etotal:', Etotal)
-    print('misclassification_rate:', misclassification_rate)
-    print('last_guesses:', last_guesses)
+    # print('W1tr:', W1tr)
+    # print('W2tr:', W2tr)
+    # print('Etotal:', Etotal)
+    # print('misclassification_rate:', misclassification_rate)
+    # print('last_guesses:', last_guesses)
+    
+    """Section 2.2"""
+    M = 6 # Size of hidden layer
+    K = 4 # Size of output layer
+    guesses = test_nn(features, M, K, W1tr, W2tr)
+
+    # print(guesses)
