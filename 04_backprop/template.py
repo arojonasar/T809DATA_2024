@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from tools import load_iris, split_train_test
 
 
-def sigmoid(x: float) -> float:
+def sigmoid(x: torch.Tensor) -> torch.Tensor:
     '''
     Calculate the sigmoid of x
     '''
@@ -16,7 +16,7 @@ def sigmoid(x: float) -> float:
     return 1 / (1 + exp)
 
 
-def d_sigmoid(x: float) -> float:
+def d_sigmoid(x: torch.Tensor) -> torch.Tensor:
     '''
     Calculate the derivative of the sigmoid of x.
     '''
@@ -28,7 +28,7 @@ def d_sigmoid(x: float) -> float:
 def perceptron(
     x: torch.Tensor,
     w: torch.Tensor
-) -> Union[float, float]:
+) -> Union[torch.Tensor, torch.Tensor]:
     '''
     Return the weighted sum of x and w as well as
     the result of applying the sigmoid activation
