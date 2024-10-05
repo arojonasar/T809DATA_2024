@@ -1,4 +1,6 @@
 from typing import Union
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 import torch
 import matplotlib.pyplot as plt
 
@@ -248,24 +250,24 @@ if __name__ == "__main__":
     # print(perceptron(torch.Tensor([0.2, 0.4]), torch.Tensor([0.1, 0.4])))
 
     """Section 1.3"""
-    # initialize the random generator to get repeatable results
-    torch.manual_seed(4321)
-    features, targets, classes = load_iris()
-    (train_features, train_targets), (test_features, test_targets) = \
-    split_train_test(features, targets)
+    # # initialize the random generator to get repeatable results
+    # torch.manual_seed(4321)
+    # features, targets, classes = load_iris()
+    # (train_features, train_targets), (test_features, test_targets) = \
+    # split_train_test(features, targets)
 
-    # initialize the random generator to get repeatable results
-    torch.manual_seed(1234)
+    # # initialize the random generator to get repeatable results
+    # torch.manual_seed(1234)
 
-    # Take one point:
-    x = train_features[0, :]
-    K = 3  # number of classes
-    M = 10
-    D = 4
-    # Initialize two random weight matrices
-    W1 = 2 * torch.rand(D + 1, M) - 1
-    W2 = 2 * torch.rand(M + 1, K) - 1
-    y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
+    # # Take one point:
+    # x = train_features[0, :]
+    # K = 3  # number of classes
+    # M = 10
+    # D = 4
+    # # Initialize two random weight matrices
+    # W1 = 2 * torch.rand(D + 1, M) - 1
+    # W2 = 2 * torch.rand(M + 1, K) - 1
+    # y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
 
     # print('y:', y)
     # print('z0:', z0)
@@ -274,42 +276,42 @@ if __name__ == "__main__":
     # print('a2:', a2)
 
     """Section 1.4"""
-    # initialize random generator to get predictable results
-    torch.manual_seed(42)
+    # # initialize random generator to get predictable results
+    # torch.manual_seed(42)
 
-    K = 3  # number of classes
-    M = 6
-    D = train_features.shape[1]
+    # K = 3  # number of classes
+    # M = 6
+    # D = train_features.shape[1]
 
-    x = features[0, :]
+    # x = features[0, :]
 
-    # create one-hot target for the feature
-    target_y = torch.zeros(K)
-    target_y[targets[0]] = 1.0
+    # # create one-hot target for the feature
+    # target_y = torch.zeros(K)
+    # target_y[targets[0]] = 1.0
 
-    # Initialize two random weight matrices
-    W1 = 2 * torch.rand(D + 1, M) - 1
-    W2 = 2 * torch.rand(M + 1, K) - 1
+    # # Initialize two random weight matrices
+    # W1 = 2 * torch.rand(D + 1, M) - 1
+    # W2 = 2 * torch.rand(M + 1, K) - 1
 
-    y, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
+    # y, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
 
     # print('y:', y)
     # print('dE1:', dE1)
     # print('dE2:', dE2)
     
     """Section 2.1"""
-    # initialize the random seed to get predictable results
-    torch.manual_seed(1234)
+    # # initialize the random seed to get predictable results
+    # torch.manual_seed(1234)
 
-    K = 3  # number of classes
-    M = 6
-    D = train_features.shape[1]
+    # K = 3  # number of classes
+    # M = 6
+    # D = train_features.shape[1]
 
-    # Initialize two random weight matrices
-    W1 = 2 * torch.rand(D + 1, M) - 1
-    W2 = 2 * torch.rand(M + 1, K) - 1
-    W1tr, W2tr, Etotal, misclassification_rate, last_guesses = train_nn(
-        train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
+    # # Initialize two random weight matrices
+    # W1 = 2 * torch.rand(D + 1, M) - 1
+    # W2 = 2 * torch.rand(M + 1, K) - 1
+    # W1tr, W2tr, Etotal, misclassification_rate, last_guesses = train_nn(
+    #     train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
     
     # print('W1tr:', W1tr)
     # print('W2tr:', W2tr)
@@ -318,8 +320,63 @@ if __name__ == "__main__":
     # print('last_guesses:', last_guesses)
     
     """Section 2.2"""
-    M = 6 # Size of hidden layer
-    K = 4 # Size of output layer
-    guesses = test_nn(features, M, K, W1tr, W2tr)
+    # M = 6 # Size of hidden layer
+    # K = 4 # Size of output layer
+    # guesses = test_nn(features, M, K, W1tr, W2tr)
 
     # print(guesses)
+
+    """Section 2.3"""
+    # initialize the random seed to get predictable results
+    torch.manual_seed(2701)
+    
+    features, targets, classes = load_iris()
+    (train_features, train_targets), (test_features, test_targets) = \
+    split_train_test(features, targets, 0.8)
+
+    K = 3  # number of classes
+    M = 6  # hidden units
+    D = train_features.shape[1]
+
+    # Initialize weight matrices
+    W1 = 2 * torch.rand(D + 1, M) - 1
+    W2 = 2 * torch.rand(M + 1, K) - 1
+
+    # Train the network
+    iterations = 500
+    learning_rate = 0.1
+    W1tr, W2tr, Etotal, misclassification_rate, last_guesses = train_nn(
+        train_features[:20, :], train_targets[:20], M, K, W1, W2, iterations, learning_rate
+    )
+
+    # Test the network
+    guesses = test_nn(test_features, M, K, W1tr, W2tr)
+
+    print('guesses:', guesses)
+    print('targets:', test_targets)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(test_targets, guesses)
+
+    # Create confusion matrix
+    conf_matrix = confusion_matrix(test_targets, guesses)
+
+    print('accuracy:', accuracy)
+    print('confusion matrix:')
+    print(conf_matrix)
+
+    # Etotal plot as a function of iterations
+    plt.plot(Etotal.numpy())
+    plt.title('Etotal vs Iterations')
+    plt.xlabel('Iterations')
+    plt.ylabel('E_total')
+    plt.savefig('etotal_vs_iterations')
+    plt.show()
+
+    # Misclassification rate plot
+    plt.plot(misclassification_rate.numpy())
+    plt.title('Misclassification Rate vs Iterations')
+    plt.xlabel('Iterations')
+    plt.ylabel('Misclassification Rate')
+    plt.savefig('misclassification_vs_iterations')
+    plt.show()
